@@ -12,10 +12,12 @@ with open('stacking_clf.pkl', 'rb') as f:
     stacking_clf = pickle.load(f)
 
 # Load CSS style
-def load_css(filename):
-    with open(os.path.join("MLE24Titanic/static", filename), "r") as f:
-        return f.read()
 
+def load_css(filename):
+    css_dir = os.path.join(os.path.dirname(__file__), "static")
+    css_path = os.path.join(css_dir, filename)
+    with open(css_path, "r") as f:
+        return f.read()
 css_style = load_css("style.css")
 
 @app.get("/", response_class=HTMLResponse)
