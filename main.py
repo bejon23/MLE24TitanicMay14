@@ -22,12 +22,15 @@ with open('stacking_clf.pkl', 'rb') as f:
     stacking_clf = pickle.load(f)
 
 # Define label encoders for categorical features
-label_encoders = {}
-categorical_features = ['sex', 'embarked']
+label_encoders = {
+    'sex': LabelEncoder(),
+    'embarked': LabelEncoder()
+}
 
-for feature in categorical_features:
-    label_encoders[feature] = LabelEncoder()
-    label_encoders[feature].fit(df[feature])
+# Load label encoders
+for feature, encoder in label_encoders.items():
+    with open(f'{feature}_encoder.pkl', 'rb') as f:
+        encoder = pickle.load(f)
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
