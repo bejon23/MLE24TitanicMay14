@@ -5,24 +5,26 @@ import pickle
 import os
 
 app = FastAPI()
-templates = Jinja2Templates(directory="MLE24Titanic/templates")
+
+import os
+
+# Get the absolute path of the current file
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the path to the templates directory
+templates_dir = os.path.join(current_dir, "templates")
+
+# Initialize Jinja2Templates with the correct directory
+templates = Jinja2Templates(directory=templates_dir)
+
 
 # Load the trained model
 with open('stacking_clf.pkl', 'rb') as f:
     stacking_clf = pickle.load(f)
 
-# Load CSS style
-
-def load_css(filename):
-    css_dir = os.path.join(os.path.dirname(__file__), "static")
-    css_path = os.path.join(css_dir, filename)
-    with open(css_path, "r") as f:
-        return f.read()
-css_style = load_css("style.css")
-
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "style": css_style})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/predict", response_class=HTMLResponse)
 async def predict(request: Request, pclass: int = Form(...), sex: str = Form(...), age: int = Form(...), sibsp: int = Form(...),
@@ -31,4 +33,4 @@ async def predict(request: Request, pclass: int = Form(...), sex: str = Form(...
     prediction = stacking_clf.predict([[pclass, sex, age, sibsp, parch, fare, embarked]])
     result = "likely" if prediction == 1 else "unlikely"
     
-    return templates.TemplateResponse("results.html", {"request": request, "style": css_style, "prediction": result})
+    return templates.TemplateResponse("results.html", {"request": request, "prediction": result})
