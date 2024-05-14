@@ -5,21 +5,22 @@ from sklearn.preprocessing import LabelEncoder
 import pickle
 import os
 
-
 app = FastAPI()
 
-# Get the absolute path of the current file. Here prathamode current diectory variable make kora hoyese. current directory te je path ei dibe seta ok.
+# Get the absolute path of the current file.
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Construct the path to the templates directory. templates fold jei loc ei thak, seta ke current directory nie nibe. ar deploy Curr Dir er upori kaj kore.
+# Construct the path to the templates directory.
 templates_dir = os.path.join(current_dir, "templates")
 
 # Initialize Jinja2Templates with the correct directory
 templates = Jinja2Templates(directory=templates_dir)
 
+# Construct the absolute path to the stacking_clf.pkl file
+model_path = os.path.join(current_dir, 'MLE24Titanic', 'stacking_clf.pkl')
 
 # Load the trained model
-with open('MLE24Titanic/stacking_clf.pkl', 'rb') as f:
+with open(model_path, 'rb') as f:
     stacking_clf = pickle.load(f)
 
 @app.get("/", response_class=HTMLResponse)
